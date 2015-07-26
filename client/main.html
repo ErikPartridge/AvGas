@@ -1,0 +1,27 @@
+<head>
+  <title>AvGas</title>
+</head>
+
+<body>
+  {{> loginButtons}}
+  
+  {{#if currentUser}}
+  {{> mainApp}}
+  {{else}}
+  {{> guest}}
+  {{/if}}
+</body>
+
+<template name="mainApp">
+	{{> map}}
+</template>
+
+<template name="map">
+    <div id="container">
+      <div id="map" class="map"></div>
+    </div>
+</template>
+
+<template name="guest">
+	<h3> Welcome, Guest! Please log in.</h3>
+</template>
