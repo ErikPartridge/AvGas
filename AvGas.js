@@ -14,12 +14,13 @@ parseVatsimData =  function(raw){
   var controllerList = [];
   var vatsim = {time: Date.now(), pilots : pilotList, controllers: controllerList};
   var vatsimId = Vatsims.insert(vatsim);
+  var airportData = Meteor.http.get(Meteor.absoluteUrl("/data/airports.json"), {timeout: 300000}).content;
   var airports = ["BOS","ALB","BDL","BGR","BTV","MHT","PVD","PWM","SYR","ACK","ASH","BAF","BED","BVY","CEF","EWB","FMH","GON","HFD","HYA","LEB","LWM","MVY","NHZ","OQU","ORH","OWD","PSM","SCH"];
   for(var i = 0; i < jsonResult.length; i++){
     if(jsonResult[i]["clienttype"] == "PILOT"){
       var pilotData = jsonResult[i];
-      var db = Meteor.users.find({username: pilotData["cid"]});
-      if(db.count() === 1){
+      var db = Meteor.users.find({username: pilotData["cid"]}).fetch();
+      if(db.length === 1){
         var pilot = {cid : pilotData["cid"],  latitude: pilotData["latitude"], longitude: pilotData["longitude"], callsign : pilotData["callsign"], vatsimId : vatsimId};
         var id = Pilots.insert(pilot);
         pilotList.push(id);
@@ -28,9 +29,12 @@ parseVatsimData =  function(raw){
       var ctrData = jsonResult[i];
       if(ctrData["callsign"].indexOf("OBS") === -1){
         var segments = ctrData["callsign"].split("_");
-        var controller = {position : ctrData["callsign"], cid: ctrData["cid"], latitude : ctrData["latitude"], longitude : ctrData["longitude"], vatsimId : vatsimId};
-        var id = Controllers.insert(controller);
-        controllerList.push(id);
+        if(airports.indexOf(segments[0]) > -1){
+          var icao = "K" + segments[0];
+          var controller = {position : ctrData["callsign"], cid: ctrData["cid"], latitude : airportData[icao]["latitude"], longitude: airportData[icao]["longitude"], vatsimId : vatsimId};
+          var id = Controllers.insert(controller);
+          controllerList.push(id);
+        }
       }
     }
   }
@@ -72,11 +76,11 @@ if (Meteor.isServer) {
     // code to run on server at startup
   });
   Meteor.publish("controllers", function(){
-    var id = Vatsims.find({}, {sort : {time : -1}})[0]._id;
+    var id = Vatsims.find({}, {sort : {time : -1}}).fetch()[0]._id;
     return Controllers.find({vatsimId: id});
   });
   Meteor.publish("pilots", function(){
-    var id = Vatsims.find({}, {sort : {time : -1}})[0]._id;
+    var id = Vatsims.find({}, {sort : {time : -1}}).fetch()[0]._id;
     return Pilots.find({vatsimId: id});
   });
 }
