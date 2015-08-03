@@ -5,6 +5,16 @@ Meteor.startup(function() {
   $(window).resize(); // trigger resize event 
 });
 
+Template.map.helpers({
+  controllerList : function(){
+    for(int i = 0; i < vatsim['controllers'].length(); i++){
+      
+    }
+  },
+  pilotList : function(){
+
+  }
+});
 
 //!!!! Positions are not yet tied to live data, with ifs or whatnot !!!!!
 Template.map.rendered = function() {

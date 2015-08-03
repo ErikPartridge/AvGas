@@ -4,7 +4,6 @@
 
 <body>
   {{> loginButtons}}
-  
   {{#if currentUser}}
   {{> mainApp}}
   {{else}}
@@ -13,7 +12,7 @@
 </body>
 
 <template name="mainApp">
-	{{> map}}
+  {{> map}}
 </template>
 
 <template name="map">
@@ -23,5 +22,5 @@
 </template>
 
 <template name="guest">
-	<h3> Welcome, Guest! Please log in.</h3>
+  <h3> Welcome, Guest! Please log in.</h3>
 </template>

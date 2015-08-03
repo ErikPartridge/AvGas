@@ -6,6 +6,12 @@ Controllers = new Mongo.Collection('controllers',{
 		},
 		cid : {
 			type: Number
+		},
+		latitude: {
+			type: Number
+		},
+		longitude: {
+			type: Number
 		}
 	}
 });
@@ -24,9 +30,6 @@ Pilots = new Mongo.Collection('pilots', {
 		},
 		callsign: {
 			type : String
-		},
-		heading: {
-			type : Number
 		}
 	}
 });
@@ -45,12 +48,12 @@ Schemas.Vatsim = new SimpleSchema({
 	},
 
 	pilots: {
-		type : [Pilots],
+		type : [Number],
 		label : "The pilots on the network"
 	},
 
 	controllers: {
-		type : [Controllers],
+		type : [Number],
 		label : "The controllers on the network"
 	}
 
