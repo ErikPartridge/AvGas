@@ -12,6 +12,9 @@ Controllers = new Mongo.Collection('controllers',{
 		},
 		longitude: {
 			type: Number
+		},
+		vatsimId : {
+			type : Number
 		}
 	}
 });
@@ -30,33 +33,30 @@ Pilots = new Mongo.Collection('pilots', {
 		},
 		callsign: {
 			type : String
+		},
+		vatsimId : {
+			type : Number
 		}
 	}
 });
 
 //We needs something to hold the data. A VATSIM is an instance of data, pulled every two minutes
-Vatsims = new Mongo.Collection("vatsims");
+Vatsims = new Mongo.Collection("vatsims", {
+	schema:{
+		time: {
+			type: Number,
+			label: "The time this was created",
+			defaultValue: Date.now()
+		},
 
-var Schemas = {};
+		pilots: {
+			type : [Number],
+			label : "The pilots on the network"
+		},
 
-//The schema
-Schemas.Vatsim = new SimpleSchema({
-	time: {
-		type: Number,
-		label: "The time this was created",
-		defaultValue: Date.now()
-	},
-
-	pilots: {
-		type : [Number],
-		label : "The pilots on the network"
-	},
-
-	controllers: {
-		type : [Number],
-		label : "The controllers on the network"
+		controllers: {
+			type : [Number],
+			label : "The controllers on the network"
+		}
 	}
-
 });
-
-Vatsims.attachSchema(Schemas.Vatsim);

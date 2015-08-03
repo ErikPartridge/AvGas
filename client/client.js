@@ -7,9 +7,7 @@ Meteor.startup(function() {
 
 Template.map.helpers({
   controllerList : function(){
-    for(int i = 0; i < vatsim['controllers'].length(); i++){
-      
-    }
+    Meteor.subscribe()
   },
   pilotList : function(){
 
