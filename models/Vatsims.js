@@ -14,7 +14,7 @@ Controllers = new Mongo.Collection('controllers',{
 			type: Number
 		},
 		vatsimId : {
-			type : Number
+			type : String
 		}
 	}
 });
@@ -35,7 +35,7 @@ Pilots = new Mongo.Collection('pilots', {
 			type : String
 		},
 		vatsimId : {
-			type : Number
+			type : String
 		}
 	}
 });
@@ -50,12 +50,12 @@ Vatsims = new Mongo.Collection("vatsims", {
 		},
 
 		pilots: {
-			type : [Number],
+			type : [String],
 			label : "The pilots on the network"
 		},
 
 		controllers: {
-			type : [Number],
+			type : [String],
 			label : "The controllers on the network"
 		}
 	}

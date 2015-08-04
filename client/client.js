@@ -5,15 +5,6 @@ Meteor.startup(function() {
   $(window).resize(); // trigger resize event 
 });
 
-Template.map.helpers({
-  controllerList : function(){
-    Meteor.subscribe()
-  },
-  pilotList : function(){
-
-  }
-});
-
 //!!!! Positions are not yet tied to live data, with ifs or whatnot !!!!!
 Template.map.rendered = function() {
   //Not sure what it does, but didn't work without this.
@@ -36,7 +27,8 @@ var SYRCoordinates = [[43.6333333333333, -76.7913888888889], [43.6333333333333, 
   }).setView([42.3629650, -71.0064238], 6);
   L.tileLayer.provider('OpenStreetMap.Mapnik').addTo(map);
   L.tileLayer.provider('OpenWeatherMap.Precipitation').addTo(map);
-
+  console.log("Controllers " + Controllers.find({}).fetch().length);
+  console.log("Pilots " + Pilots.find({}).fetch().length);
   //Execute each of these commands if the center or the tracon covering it is online
   if(Controllers.find({callsign:{$regex:"^BOS_.*CTR$"}}).fetch().length > 0){
     var zbw = L.polygon(ZBWARTCCCoordinates, {smoothFactor: .5, color: '#10ef49', opacity: .5}).addTo(map);
@@ -110,17 +102,24 @@ var SYRCoordinates = [[43.6333333333333, -76.7913888888889], [43.6333333333333, 
     var longitude = twrs[i]["longitude"];
     L.marker([latitude, longitude], {icon: tIcon}).addTo(map);
   }
-  for(var i = 0; i < gnds.length; i++){
-    var latitude = gnds[i]["latitude"];
-    var longitude = gnds[i]["longitude"];
+  for(var j = 0; j < gnds.length; j++){
+    var latitude = gnds[j]["latitude"];
+    var longitude = gnds[j]["longitude"];
     L.marker([latitude, longitude], {icon: gIcon}).addTo(map);
   }
-  for(var i = 0; i < dels.length; i++){
-    var latitude = dels[i]["latitude"];
-    var longitude = dels[i]["longitude"];
+  for(var k = 0; k < dels.length; k++){
+    var latitude = dels[k]["latitude"];
+    var longitude = dels[k]["longitude"];
     L.marker([latitude, longitude], {icon: dIcon}).addTo(map);
   }
 
+  var pilots = Pilots.find({}).fetch();
+  console.log(pilots.length);
+  for(var l = 0; l < pilots.length; l++){
+    var latitude = pilots[l]["latitude"];
+    var longitude = pilots[l]["longitude"];
+    L.marker([latitude, longitude]).addTo(map);
+  }
 
   //This makes 'em show up at Boston.
   //L.marker([42.3629650, -71.0064238], {icon: dIcon}).addTo(map);

@@ -30,3 +30,26 @@ Accounts.validateNewUser(function (user){
       throw new Meteor.Error(403, "Your username must be your CID!");
   }
 });
+
+SyncedCron.add({
+  //Part way here.
+  name: 'Update the VATSIM controllers data',
+  schedule : function(parser){
+      return parser.text('every 2 minutes');
+  },
+  job: function(){
+    //Get the XML data for online controllers, pilots doesn't work
+    var servers = ['http://www.pcflyer.net/DataFeed/vatsim-data.txt',
+        'http://fsproshop.com/servinfo/vatsim-data.txt',
+        'http://vatsim-data.hardern.net/vatsim-data.txt',
+        'http://info.vroute.net/vatsim-data.txt',
+        'http://data.vattastic.com/vatsim-data.txt']
+    var result = Meteor.http.get(servers[Math.floor(Math.random()*servers.length)], {timeout : 30000});
+    if(result.statusCode != 200){
+      throw new Meteor.Error(403, "Unable to connect to the VATSIM Network, please try again later");
+    }
+    parseVatsimData(result.content);
+  }
+});
+
+SyncedCron.start();
