@@ -20,7 +20,7 @@ parseVatsimData =  function(raw){
     if(jsonResult[i]["clienttype"] == "PILOT"){
       var pilotData = jsonResult[i];
       var db = Meteor.users.find({username: pilotData["cid"]}).fetch();
-      if(db.length > 0){
+      if(!isNaN(pilotData["latitude"]) && pilotData["latitude"] != null){
         var pilot = {cid : pilotData["cid"],  latitude: pilotData["latitude"], longitude: pilotData["longitude"], callsign : pilotData["callsign"], vatsimId : vatsimId};
         var id = Pilots.insert(pilot);
         pilotList.push(id);
@@ -30,7 +30,7 @@ parseVatsimData =  function(raw){
       if(ctrData["callsign"].indexOf("OBS") === -1){
         var segments = ctrData["callsign"].split("_");
         if(airports.indexOf(segments[0]) > -1){
-          var icao = "K" + segments[0];
+          console.log(ctrData["callsign"]);
           var controller = {position : ctrData["callsign"], cid: ctrData["cid"], latitude : ctrData["latitude"], longitude: ctrData["longitude"], vatsimId : vatsimId};
           var id = Controllers.insert(controller);
           controllerList.push(id);
@@ -47,7 +47,7 @@ if (Meteor.isClient) {
 
 if (Meteor.isServer) {
   Meteor.publish("controllers", function(){
-    var id = Vatsims.find({}, {sort :{$natural : 1}}).fetch()[0]._id;
+    var id = Vatsims.find({}, {sort :{$natural : -1}}).fetch()[0]._id;
     //console.log(Controllers.find({vatsimId : id}).fetch().length);
     return Controllers.find({vatsimId: id});
   });
