@@ -7,8 +7,14 @@ Controllers = new Mongo.Collection('controllers',{
 		cid : {
 			type: Number
 		},
+		frequency: {
+			type: String
+		},
 		latitude: {
 			type: Number
+		},
+		realname:{
+			type: String
 		},
 		longitude: {
 			type: Number
@@ -24,6 +30,15 @@ Pilots = new Mongo.Collection('pilots', {
 	schema:{
 		cid: {
 			type: Number
+		},
+		realname : {
+			type: String
+		},
+		departs : {
+			type: String
+		},
+		arrives : {
+			type: String
 		},
 		latitude: {
 			type: Number

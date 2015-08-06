@@ -1,11 +1,42 @@
 Meteor.startup(function() {
   $(window).resize(function() {
-    $('#map').css('height', window.innerHeight - 82 - 45);
+    $('#map').css('height', window.innerHeight - 200);
+    /*$('#map').css('width', window.innerWidth - 250);*/
   });
   $(window).resize(); // trigger resize event 
+  window.dispatchEvent(new Event('resize'));
 });
 
-//!!!! Positions are not yet tied to live data, with ifs or whatnot !!!!!
+Template.online.helpers({
+  controllers : function(){
+    return Controllers.find().fetch();
+  },
+  offline : function(){
+    return Controllers.find().fetch().length === 0;
+  }
+});
+Template.chat.helpers({
+  messages : function(){
+    return Messages.find({}, {limit: 25, sort:{time : -1}}).fetch();
+  }
+});
+
+Template.chat.events({
+  'click .button' : function(event){
+    event.preventDefault();
+    var messageContent = $("#messageContent").val();
+    var namePoster = Meteor.user().profile["name"];
+    var timestamp = Date.now();
+    Meteor.call('newMessage', {name: namePoster, content : messageContent, time:timestamp, hoursMinutes : new Date().getHours() + ":" + new Date().getMinutes()});
+  }
+});
+
+Template.chat.rendered = function(){
+  var messages = Meteor.subscribe("messages", function(){
+    console.log("Messages ready! ");
+  });
+}
+
 Template.map.rendered = function() {
 
   L.Icon.Default.imagePath = 'packages/bevanhunt_leaflet/images';
@@ -13,7 +44,7 @@ Template.map.rendered = function() {
 
   var map = L.map('map', {
     doubleClickZoom: true
-  }).setView([42.3629650, -71.0064238], 6);
+  }).setView([42.9629650, -71.2064238], 7);
 
   //Not sure what it does, but didn't work without this.
 var controllerHandle = Meteor.subscribe("controllers", function(){
@@ -48,7 +79,9 @@ var SYRCoordinates = [[43.6333333333333, -76.7913888888889], [43.6333333333333, 
       if(!isNaN(pilots[l]["latitude"]) && !isNaN(pilots[l]["longitude"])){
         var latitude = pilots[l]["latitude"];
         var longitude = pilots[l]["longitude"];
-        L.marker([latitude, longitude]).addTo(map);
+        var marker= L.marker([latitude, longitude]);
+        marker.bindPopup(pilots[l]["realname"] + " - " + pilots[l]["callsign"] + "<br>" + pilots[l]["departs"] + "->"+ pilots[l]["arrives"]);
+        marker.addTo(map);
         }
       }
     } 

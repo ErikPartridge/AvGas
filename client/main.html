@@ -1,5 +1,6 @@
 <head>
   <title>AvGas</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/kube/3.0.2/css/kube.css"/>
 </head>
 
 <body>
@@ -12,15 +13,54 @@
 </body>
 
 <template name="mainApp">
-  {{> map}}
+  <div class="units-row">
+    <div class="unit-75">
+      {{> map}}
+    </div>
+    <div class="unit-25">
+      {{> online}}
+    </div>
+  </div>
+  <div class="units-row">
+    <div class="unit-70">
+    {{> chat}}
+    </div>
+  </div>
 </template>
 
 <template name="map">
-    <div id="container">
-      <div id="map" class="map"></div>
-    </div>
+    <div id="map" class="map"></div>
+</template>
+
+<template name="chat">
+<div class="shoutbox">
+  {{#each messages}}
+  <p class="shout">{{name}} @ {{hoursMinutes}}-&nbsp;{{content}}</p>
+  {{/each}}
+  </div>
+  <form>
+  <input type="text" id="messageContent"/><button class="button" type="submit">Tell the world!</button>
+  </form>
+</template>
+
+<template name="online">
+  <div class="whos-online">
+    <h3>Online Controllers</h3>
+    <hr>
+    {{#if offline}}
+    <p>No controllers are currently online.</p>
+    {{/if}}
+    <ul>
+      {{#each controllers}}
+      <li>{{position}} - {{frequency}}</li>
+      {{/each}}
+    </ul>
+  </div>
 </template>
 
 <template name="guest">
-  <h3> Welcome, Guest! Please log in.</h3>
+  <div class="guest-login">
+    <h3>Welcome to the Boston Virtual ARTCC service center-- AvGas.</h3>
+    <p>Please login or register in the upper left corner with your CID and a password of your choice to be allowed in.</p>
+  </div>
 </template>

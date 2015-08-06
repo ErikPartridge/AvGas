@@ -20,8 +20,8 @@ parseVatsimData =  function(raw){
     if(jsonResult[i]["clienttype"] == "PILOT"){
       var pilotData = jsonResult[i];
       var db = Meteor.users.find({username: pilotData["cid"]}).fetch();
-      if(!isNaN(pilotData["latitude"]) && pilotData["latitude"] != null){
-        var pilot = {cid : pilotData["cid"],  latitude: pilotData["latitude"], longitude: pilotData["longitude"], callsign : pilotData["callsign"], vatsimId : vatsimId};
+      if(!isNaN(pilotData["latitude"]) && !isNaN(pilotData["longitude"]) && pilotData["latitude"] != null){
+        var pilot = {cid : pilotData["cid"], realname: pilotData["realname"], departs : pilotData["planned_depairport"], arrives: pilotData["planned_destairport"], latitude: pilotData["latitude"], longitude: pilotData["longitude"], callsign : pilotData["callsign"], vatsimId : vatsimId};
         var id = Pilots.insert(pilot);
         pilotList.push(id);
       }
@@ -31,7 +31,7 @@ parseVatsimData =  function(raw){
         var segments = ctrData["callsign"].split("_");
         if(airports.indexOf(segments[0]) > -1){
           console.log(ctrData["callsign"]);
-          var controller = {position : ctrData["callsign"], cid: ctrData["cid"], latitude : ctrData["latitude"], longitude: ctrData["longitude"], vatsimId : vatsimId};
+          var controller = {position : ctrData["callsign"], realname: ctrData["realname"], cid: ctrData["cid"], frequency: ctrData["frequency"], latitude : ctrData["latitude"], longitude: ctrData["longitude"], vatsimId : vatsimId};
           var id = Controllers.insert(controller);
           controllerList.push(id);
         }
@@ -46,6 +46,11 @@ if (Meteor.isClient) {
 }
 
 if (Meteor.isServer) {
+  Meteor.methods({
+     newMessage : function(comment){
+      Messages.insert(comment);
+    }
+  });
   Meteor.publish("controllers", function(){
     var id = Vatsims.find({}, {sort :{$natural : -1}}).fetch()[0]._id;
     //console.log(Controllers.find({vatsimId : id}).fetch().length);
@@ -55,5 +60,8 @@ if (Meteor.isServer) {
     var id = Vatsims.find({}, {sort : {$natural : -1}}).fetch()[0]._id;
     //console.log(Pilots.find({vatsimId : id}).fetch().length);
     return Pilots.find({vatsimId: id});
+  });
+  Meteor.publish("messages", function(){
+    return Messages.find();
   });
 }
