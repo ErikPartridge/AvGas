@@ -20,7 +20,7 @@ parseVatsimData =  function(raw){
     if(jsonResult[i]["clienttype"] == "PILOT"){
       var pilotData = jsonResult[i];
       var db = Meteor.users.find({username: pilotData["cid"]}).fetch();
-      if(true){
+      if(db.length > 0){
         var pilot = {cid : pilotData["cid"],  latitude: pilotData["latitude"], longitude: pilotData["longitude"], callsign : pilotData["callsign"], vatsimId : vatsimId};
         var id = Pilots.insert(pilot);
         pilotList.push(id);
@@ -43,24 +43,17 @@ parseVatsimData =  function(raw){
 
 if (Meteor.isClient) {
   // Nothing here yet, using client/
-  Tracker.autorun(function(){
-    Meteor.subscribe("controllers");
-    Meteor.subscribe("pilots");
-  });
 }
 
 if (Meteor.isServer) {
-  Meteor.startup(function () {
-    // code to run on server at startup
-  });
   Meteor.publish("controllers", function(){
     var id = Vatsims.find({}, {sort :{$natural : 1}}).fetch()[0]._id;
-    console.log(Controllers.find({vatsimId : id}).fetch().length);
+    //console.log(Controllers.find({vatsimId : id}).fetch().length);
     return Controllers.find({vatsimId: id});
   });
   Meteor.publish("pilots", function(){
     var id = Vatsims.find({}, {sort : {$natural : -1}}).fetch()[0]._id;
-    console.log(Pilots.find({vatsimId : id}).fetch().length);
+    //console.log(Pilots.find({vatsimId : id}).fetch().length);
     return Pilots.find({vatsimId: id});
   });
 }

@@ -1,12 +1,11 @@
-Accounts.emailTemplates.siteName = "Boston vARTCC";
-Accounts.emailTemplates.from = "Boston John <no-reply@bvartcc.com>";
+//Accounts.emailTemplates.siteName = "Boston vARTCC";
+//Accounts.emailTemplates.from = "Boston John <no-reply@bvartcc.com>";
 
 //Self explanatory
 Accounts.config({
-  sendVerificationEmail : true,
+  sendVerificationEmail : false,
   loginExpirationInDays : 30
 });
-
 
 Accounts.validateNewUser(function (user){
   //Validate that it has the lengh of a CID
